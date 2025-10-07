@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - 3500 4 the coat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .input-highlight {
+            border-color: #4CAF50 !important;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans flex items-center justify-center min-h-screen">
+    <div class="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+        <div class="flex items-center justify-center mb-6">
+            <i class="fas fa-tractor text-4xl text-green-600 mr-3"></i>
+            <h1 class="text-2xl font-bold text-gray-800">3500 4 the coat</h1>
+        </div>
+        <h2 class="text-xl font-semibold text-gray-700 mb-6 text-center">Welcome to Your Farm Dashboard</h2>
+
+        <!-- Login Form -->
+        <div id="loginForm" class="space-y-4">
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="email" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter your email">
+            </div>
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="password" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter your password">
+            </div>
+            <button id="loginButton" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center">
+                <span>Login</span>
+            </button>
+        </div>
+
+        <!-- Sign-Up Form -->
+        <div id="signupForm" class="space-y-4 hidden">
+            <div>
+                <label for="signupEmail" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="signupEmail" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter your email">
+            </div>
+                        <div>
+                <label for="signupPhone" class="block text-sm font-medium text-gray-700">Phone</label>
+                <input type="phone" id="signupEPhone" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Enter your phone number">
+            </div>
+            <div>
+                <label for="signupPassword" class="block text-sm font-medium text-gray-700">Password</label>
+                <input type="password" id="signupPassword" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" placeholder="Create a password">
+            </div>
+            <button id="signupButton" class="w-full bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 flex items-center justify-center">
+                <span>Sign Up</span>
+            </button>
+        </div>
+
+        <!-- Toggle Links -->
+        <p class="text-sm text-gray-600 mt-4 text-center">
+            <span id="toggleToSignup">Don't have an account? <a href="#" class="text-green-600 hover:underline">Sign up</a></span>
+            <span id="toggleToLogin" class="hidden">Already have an account? <a href="#" class="text-green-600 hover:underline">Login</a></span>
+        </p>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script type="module">
+        // Firebase Imports
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+        import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+        // Firebase Config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOO486IUm7SIvLPB-LfNayc4fYcwFwGBc",
+            authDomain: "plaas06.firebaseapp.com",
+            projectId: "plaas06",
+            storageBucket: "plaas06.firebasestorage.app",
+            messagingSenderId: "229132456479",
+            appId: "1:229132456479:web:c24cf9de240b7f7388bb2a",
+            measurementId: "G-DKYV7T1ZGM"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+
+        // Toast Helper
+        function showError(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#dc2626',
+            }).showToast();
+        }
+
+        // Login Handler
+        const loginButton = document.getElementById('loginButton');
+        loginButton.addEventListener('click', async () => {
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+
+            if (!email || !password) {
+                showError('Please enter both email and password.');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+
+            loginButton.disabled = true;
+            loginButton.classList.add('loading');
+            loginButton.innerHTML = 'Logging in';
+
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                window.location.href = 'index.html';
+            } catch (error) {
+                let message = 'An error occurred. Please try again.';
+                switch (error.code) {
+                    case 'auth/invalid-email':
+                        message = 'Invalid email address.';
+                        break;
+                    case 'auth/user-not-found':
+                        message = 'No account found with this email.';
+                        break;
+                    case 'auth/wrong-password':
+                        message = 'Incorrect password.';
+                        break;
+                    case 'auth/too-many-requests':
+                        message = 'Too many attempts. Try again later.';
+                        break;
+                }
+                showError(message);
+            } finally {
+                loginButton.disabled = false;
+                loginButton.classList.remove('loading');
+                loginButton.innerHTML = 'Login';
+            }
+        });
+
+        // Signup Handler
+        const signupButton = document.getElementById('signupButton');
+        signupButton.addEventListener('click', async () => {
+            const email = document.getElementById('signupEmail').value.trim();
+            const password = document.getElementById('signupPassword').value.trim();
+
+            if (!email || !password) {
+                showError('Please enter both email and password.');
+                return;
+            }
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                showError('Please enter a valid email address.');
+                return;
+            }
+
+            signupButton.disabled = true;
+            signupButton.classList.add('loading');
+            signupButton.innerHTML = 'Signing up';
+
+            try {
+                await createUserWithEmailAndPassword(auth, email, password);
+                window.location.href = 'index.html';
+            } catch (error) {
+                let message = 'Sign-up failed.';
+                switch (error.code) {
+                    case 'auth/email-already-in-use':
+                        message = 'Email already in use.';
+                        break;
+                    case 'auth/invalid-email':
+                        message = 'Invalid email address.';
+                        break;
+                    case 'auth/weak-password':
+                        message = 'Password should be at least 6 characters.';
+                        break;
+                }
+                showError(message);
+            } finally {
+                signupButton.disabled = false;
+                signupButton.classList.remove('loading');
+                signupButton.innerHTML = 'Sign Up';
+            }
+        });
+
+        // Toggle Login/Signup
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const toggleToSignup = document.getElementById('toggleToSignup');
+        const toggleToLogin = document.getElementById('toggleToLogin');
+
+        toggleToSignup.addEventListener('click', (e) => {
+            e.preventDefault();
+            loginForm.classList.add('hidden');
+            signupForm.classList.remove('hidden');
+            toggleToSignup.classList.add('hidden');
+            toggleToLogin.classList.remove('hidden');
+        });
+
+        toggleToLogin.addEventListener('click', (e) => {
+            e.preventDefault();
+            signupForm.classList.add('hidden');
+            loginForm.classList.remove('hidden');
+            toggleToLogin.classList.add('hidden');
+            toggleToSignup.classList.remove('hidden');
+        });
+
+        // Highlight Inputs
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function () {
+                this.classList.add('input-highlight');
+            });
+            input.addEventListener('blur', function () {
+                this.classList.remove('input-highlight');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Profile - 3500 4 the coat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+       .input-highlight {
+    border-color: #4CAF50 !important;
+}
+.loading::after {
+    content: '';
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid #fff;
+    border-top-color: transparent;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+    margin-left: 8px;
+}
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+.main-content {
+    width: 100%; /* Full viewport width */
+    padding: 1rem; /* Equivalent to Tailwind's p-4 */
+}
+.profile-card {
+    background-color: #ffffff; /* Equivalent to Tailwind's bg-white */
+    border-radius: 1.5rem; /* Equivalent to Tailwind's rounded-2xl */
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); /* Equivalent to Tailwind's shadow-sm */
+    padding: 2rem; /* Equivalent to Tailwind's p-8 */
+    width: 100%; /* Ensure card takes full width of parent */
+}
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="min-h-screen flex flex-col">
+        <!-- Top Navigation -->
+        <div class="bg-white border-b flex items-center justify-between p-4">
+            <div class="flex items-center space-x-4">
+                <a href="index.html" class="text-gray-600 hover:text-gray-900" aria-label="Back to dashboard">
+                    <i class="fas fa-arrow-left"></i>
+                </a>
+                <h1 class="text-xl font-bold text-gray-800">User Profile</h1>
+            </div>
+            <div class="flex items-center space-x-4">
+                <button id="logoutButton" class="text-gray-600 hover:text-gray-900" aria-label="Sign out">
+                    <i class="fas fa-sign-out-alt"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="flex-1 p-6 max-w-2xl mx-auto">
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h2 class="text-lg font-semibold mb-4 text-gray-800">Profile Details</h2>
+                <div class="space-y-6">
+                    <!-- Profile Picture -->
+                    <div class="flex items-center space-x-4">
+                        <div class="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center overflow-hidden">
+                            <img id="profilePicture" src="https://via.placeholder.com/64" alt="Profile picture" class="w-full h-full object-cover">
+                        </div>
+                        <div>
+                            <label for="profilePictureInput" class="text-sm text-green-600 hover:text-green-800 cursor-pointer">
+                                <i class="fas fa-camera mr-1"></i> Change Picture
+                            </label>
+                            <input type="file" id="profilePictureInput" accept="image/*" class="hidden">
+                        </div>
+                    </div>
+
+                    <!-- Display Name -->
+                    <div>
+                        <label for="displayName" class="block text-sm font-medium text-gray-700">Display Name</label>
+                        <input type="text" id="displayName" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-highlight" aria-required="true">
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label for="email" class="block text-sm font-medium text-gray-700">Email</label>
+                        <input type="email" id="email" class="mt-1 block w-full border rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed" readonly aria-readonly="true">
+                    </div>
+
+                    <!-- Phone Number -->
+                    <div>
+                        <label for="phoneNumber" class="block text-sm font-medium text-gray-700">Phone Number</label>
+                        <input type="tel" id="phoneNumber" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-highlight" placeholder="+27733504075">
+                    </div>
+
+                    <!-- Farm Name -->
+                    <div>
+                        <label for="farmName" class="block text-sm font-medium text-gray-700">Farm Name</label>
+                        <input type="text" id="farmName" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500 input-highlight" placeholder="e.g., Bernard Plaas">
+                    </div>
+
+                    <!-- Account Creation Date -->
+                    <div>
+                        <label for="createdAt" class="block text-sm font-medium text-gray-700">Account Created</label>
+                        <input type="text" id="createdAt" class="mt-1 block w-full border rounded-lg px-3 py-2 bg-gray-100 cursor-not-allowed" readonly aria-readonly="true">
+                    </div>
+
+                    <!-- Actions -->
+                    <div class="flex justify-end space-x-3">
+                        <button id="saveProfile" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" aria-label="Save profile changes">Save Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, onAuthStateChanged, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-storage.js";
+
+        // Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyDOO486IUm7SIvLPB-LfNayc4fYcwFwGBc",
+            authDomain: "plaas06.firebaseapp.com",
+            projectId: "plaas06",
+            storageBucket: "plaas06.firebasestorage.app",
+            messagingSenderId: "229132456479",
+            appId: "1:229132456479:web:c24cf9de240b7f7388bb2a",
+            measurementId: "G-DKYV7T1ZGM"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        // Toast Notification Helper
+        function showError(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#dc2626',
+            }).showToast();
+        }
+
+        function showSuccess(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                backgroundColor: '#4CAF50',
+            }).showToast();
+        }
+
+        // Update UI with user data
+        async function updateUI(user) {
+            const displayNameInput = document.getElementById('displayName');
+            const emailInput = document.getElementById('email');
+            const phoneNumberInput = document.getElementById('phoneNumber');
+            const farmNameInput = document.getElementById('farmName');
+            const createdAtInput = document.getElementById('createdAt');
+            const profilePicture = document.getElementById('profilePicture');
+
+            if (user) {
+                // Fetch Firebase Authentication data
+                displayNameInput.value = user.displayName || '';
+                emailInput.value = user.email || '';
+                profilePicture.src = user.photoURL || 'https://via.placeholder.com/64';
+                createdAtInput.value = user.metadata.creationTime
+                    ? new Date(user.metadata.creationTime).toLocaleDateString('en-US', {
+                          month: 'long',
+                          day: 'numeric',
+                          year: 'numeric',
+                      })
+                    : 'Unknown';
+
+                // Fetch additional data from Firestore
+                try {
+                    const userDocRef = doc(db, 'users', user.uid);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        const data = userDoc.data();
+                        phoneNumberInput.value = data.phoneNumber || '';
+                        farmNameInput.value = data.farmName || '';
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data from Firestore:', error);
+                    showError('Failed to load additional profile data.');
+                }
+            } else {
+                showError('Please log in to view your profile.');
+                window.location.href = '/login.html';
+            }
+        }
+
+        // Initialize Profile Page
+        function initialize() {
+            onAuthStateChanged(auth, (user) => {
+                if (user) {
+                    updateUI(user);
+
+                    // Save Profile Changes
+                    document.getElementById('saveProfile').addEventListener('click', async () => {
+                        const displayName = document.getElementById('displayName').value.trim();
+                        const phoneNumber = document.getElementById('phoneNumber').value.trim();
+                        const farmName = document.getElementById('farmName').value.trim();
+                        const saveButton = document.getElementById('saveProfile');
+
+                        if (!displayName) {
+                            showError('Display name is required.');
+                            return;
+                        }
+
+                        // Basic phone number validation (optional field)
+                        if (phoneNumber && !/^\+?[1-9]\d{1,14}$/.test(phoneNumber)) {
+                            showError('Please enter a valid phone number (e.g., +1234567890).');
+                            return;
+                        }
+
+                        saveButton.disabled = true;
+                        saveButton.classList.add('loading');
+                        saveButton.textContent = 'Saving';
+
+                        try {
+                            // Update Firebase Authentication profile
+                            await updateProfile(auth.currentUser, { displayName });
+
+                            // Update Firestore with additional data
+                            const userDocRef = doc(db, 'users', auth.currentUser.uid);
+                            await setDoc(
+                                userDocRef,
+                                {
+                                    phoneNumber: phoneNumber || '',
+                                    farmName: farmName || '',
+                                    updatedAt: new Date().toISOString(),
+                                },
+                                { merge: true }
+                            );
+
+                            showSuccess('Profile updated successfully.');
+                        } catch (error) {
+                            console.error('Error updating profile:', error);
+                            showError('Failed to update profile: ' + error.message);
+                        } finally {
+                            saveButton.disabled = false;
+                            saveButton.classList.remove('loading');
+                            saveButton.textContent = 'Save Changes';
+                        }
+                    });
+
+                    // Profile Picture Upload
+                    document.getElementById('profilePictureInput').addEventListener('change', async (e) => {
+                        const file = e.target.files[0];
+                        if (!file) return;
+
+                        if (!['image/jpeg', 'image/png'].includes(file.type)) {
+                            showError('Please upload a JPEG or PNG image.');
+                            return;
+                        }
+
+                        if (file.size > 2 * 1024 * 1024) {
+                            showError('Image size must be less than 2MB.');
+                            return;
+                        }
+
+                        const storageRef = ref(storage, `profile_pictures/${auth.currentUser.uid}`);
+                        try {
+                            await uploadBytes(storageRef, file);
+                            const photoURL = await getDownloadURL(storageRef);
+                            await updateProfile(auth.currentUser, { photoURL });
+                            document.getElementById('profilePicture').src = photoURL;
+                            showSuccess('Profile picture updated.');
+                        } catch (error) {
+                            console.error('Error uploading profile picture:', error);
+                            showError('Failed to upload picture: ' + error.message);
+                        }
+                    });
+
+                    // Logout
+                    document.getElementById('logoutButton').addEventListener('click', () => {
+                        signOut(auth)
+                            .then(() => {
+                                console.log('User signed out');
+                                window.location.href = '/login.html';
+                            })
+                            .catch((error) => {
+                                console.error('Error signing out:', error);
+                                showError('Failed to sign out: ' + error.message);
+                            });
+                    });
+                } else {
+                    updateUI(null);
+                }
+            });
+        }
+
+        initialize();
+    </script>
+</body>
+</html>

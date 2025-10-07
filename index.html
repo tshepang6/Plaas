@@ -1,0 +1,1535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3500 4 the coat</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
+    <style>
+        .sidebar {
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+        .sidebar.collapsed {
+            width: 70px;
+        }
+        .sidebar.collapsed .nav-text {
+            display: none;
+        }
+        .sidebar.collapsed .logo-text {
+            display: none;
+        }
+        .sidebar.collapsed .nav-item {
+            justify-content: center;
+        }
+        .sidebar.collapsed .dropdown-menu {
+            display: none;
+        }
+        .main-content {
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+        .sidebar:not(.collapsed) + .main-content {
+            margin-left: 256px;
+        }
+        .sidebar.collapsed + .main-content {
+            margin-left: 70px;
+        }
+        .input-highlight {
+            border-color: #4CAF50 !important;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 400px;
+        }
+        .dropdown-menu {
+            display: none;
+            background: #2d6a4f;
+            border-radius: 8px;
+            margin-top: 4px;
+        }
+        .dropdown-menu.show {
+            display: block;
+        }
+        .loading::after {
+            content: '';
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid #fff;
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-left: 8px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        .sidebar-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+        }
+        .sidebar.open + .sidebar-backdrop {
+            display: block;
+        }
+        .mobile-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1100;
+            background: white;
+            padding: 0.5rem;
+        }
+        .hamburger-button {
+            display: none;
+            font-size: 1.75rem;
+            padding: 0.75rem;
+            background-color: #2f855a;
+            color: white;
+            border: 1px solid #1a4d34;
+            border-radius: 8px;
+        }
+        .task-section {
+            border-left: 4px solid;
+        }
+        .task-section.to-be-done {
+            border-color: #f59e0b;
+        }
+        .task-section.busy-with {
+            border-color: #3b82f6;
+        }
+        .task-section.done {
+            border-color: #10b981;
+        }
+        .task-section-header {
+            cursor: pointer;
+        }
+        .task-section-content {
+            display: none;
+        }
+        .task-section-content.show {
+            display: block;
+        }
+        .notification-success {
+            background-color: #10b981 !important;
+            color: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .notification-warning {
+            background-color: #f59e0b !important;
+            color: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        .notification-error {
+            background-color: #dc2626 !important;
+            color: white;
+            border-radius: 8px;
+            padding: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        @media (max-width: 768px) {
+            .mobile-header {
+                display: block;
+            }
+            .hamburger-button {
+                display: block;
+            }
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: -100%;
+                height: 100vh;
+                width: 100%;
+                max-width: 200px;
+                transition: left 0.3s ease;
+            }
+            .sidebar.open {
+                left: 0;
+            }
+            .sidebar.collapsed {
+                width: 60px;
+                left: -60px;
+            }
+            .sidebar.collapsed.open {
+                left: 0;
+            }
+            .main-content {
+                margin-left: 0 !important;
+                padding-top: 4rem;
+            }
+            .sidebar.open ~ .main-content {
+                pointer-events: none;
+            }
+            .top-nav {
+                display: none;
+            }
+            table {
+                display: block;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr !important;
+            }
+            .modal-content {
+                width: 95%;
+                max-width: 350px;
+            }
+            .text-2xl {
+                font-size: 1.25rem;
+            }
+            .text-lg {
+                font-size: 1rem;
+            }
+            .nav-item {
+                padding: 0.75rem !important;
+            }
+        }
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .sidebar {
+                width: 200px;
+            }
+            .sidebar.collapsed {
+                width: 60px;
+            }
+            .sidebar:not(.collapsed) + .main-content {
+                margin-left: 200px;
+            }
+            .sidebar.collapsed + .main-content {
+                margin-left: 60px;
+            }
+            .main-content {
+                padding: 1.5rem;
+            }
+            .mobile-header {
+                display: none;
+            }
+        }
+        @media (min-width: 1025px) {
+            .mobile-header {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 font-sans">
+    <div class="flex h-screen overflow-hidden">
+        <!-- Mobile Header -->
+        <div class="mobile-header">
+            <button id="toggleSidebar" class="hamburger-button focus:outline-none focus:ring-2 focus:ring-green-500" aria-label="Toggle sidebar" aria-expanded="false">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        <!-- Sidebar -->
+        <div class="sidebar bg-green-800 text-white w-64 flex flex-col">
+            <div class="p-4 flex items-center space-x-3 border-b border-green-700">
+                <i class="fa-solid fa-dog"></i>
+                <span class="logo-text text-xl font-bold">3500 4 the coat</span>
+            </div>
+            <div class="flex-1 overflow-y-auto py-4">
+                <div class="space-y-2 px-4">
+                    <div class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 cursor-pointer bg-green-700" data-section="dashboard" role="button" aria-label="Navigate to Dashboard">
+                        <i class="fas fa-chart-line"></i>
+                        <span class="nav-text">Dashboard</span>
+                    </div>
+                    <div class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 cursor-pointer" data-section="livestock" role="button" aria-label="Navigate to Livestock or Toggle Menu" aria-expanded="false">
+                        <i class="fas fa-cow"></i>
+                        <span class="nav-text">Livestock</span>
+                        <i class="fas fa-chevron-down ml-auto dropdown-toggle"></i>
+                    </div>
+                    <div class="dropdown-menu px-4" role="menu">
+                        <div class="nav-item flex items-center space-x-3 p-2 rounded-lg hover:bg-green-600 cursor-pointer" data-section="livestock-cattle" role="menuitem" aria-label="Navigate to Cattle">
+                            <span class="nav-text text-sm">Cattle</span>
+                            <span class="nav-text text-sm text-green-300" id="cattle-count">(0)</span>
+                        </div>
+                        <div class="nav-item flex items-center space-x-3 p-2 rounded-lg hover:bg-green-600 cursor-pointer" data-section="livestock-sheep" role="menuitem" aria-label="Navigate to Sheep">
+                            <span class="nav-text text-sm">Sheep</span>
+                            <span class="nav-text text-sm text-green-300" id="sheep-count">(0)</span>
+                        </div>
+                        <div class="nav-item flex items-center space-x-3 p-2 rounded-lg hover:bg-green-600 cursor-pointer" data-section="livestock-goat" role="menuitem" aria-label="Navigate to Goat">
+                            <span class="nav-text text-sm">Goat</span>
+                            <span class="nav-text text-sm text-green-300" id="goat-count">(0)</span>
+                        </div>
+                    </div>
+                    <div class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 cursor-pointer" data-section="activities" role="button" aria-label="Navigate to Activities">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span class="nav-text">Activities</span>
+                    </div>
+                    <div class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 cursor-pointer" data-section="health" role="button" aria-label="Navigate to Health">
+                        <i class="fas fa-stethoscope"></i>
+                        <span class="nav-text">Health</span>
+                    </div>
+                    <div class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 cursor-pointer" data-section="weather" role="button" aria-label="Navigate to Weather">
+                        <i class="fas fa-cloud-sun-rain"></i>
+                        <span class="nav-text">Weather</span>
+                    </div>
+                </div>
+                <div class="px-4 mt-8">
+                    <div class="text-xs uppercase text-green-300 mb-2">Reports</div>
+                    <div class="nav-item flex items-center space-x-3 p-3 rounded-lg hover:bg-green-700 cursor-pointer" data-section="annual-report" role="button" aria-label="Navigate to Annual Report">
+                        <i class="fas fa-file-alt"></i>
+                        <span class="nav-text">Annual Report</span>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 border-t border-green-700">
+                <div class="flex items-center space-x-3">
+                    <div class="w-8 h-8 rounded-full bg-green-600 flex items-center justify-center">
+                        <i class="fas fa-user"></i>
+                    </div>
+                    <div>
+                        <div class="nav-text font-medium" id="userName"></div>
+                        <div class="nav-text text-xs text-green-300" id="userStatus">Authenticated</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Sidebar Backdrop -->
+        <div class="sidebar-backdrop"></div>
+        <!-- Main Content -->
+        <div class="main-content flex-1 flex flex-col overflow-hidden">
+            <!-- Top Navigation -->
+            <div class="bg-white border-b flex items-center justify-between p-4 top-nav">
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <input type="text" placeholder="Search farm data..." class="pl-10 pr-4 py-2 border rounded-lg w-64 focus:outline-none focus:ring-2 focus:ring-green-500 search-input" aria-label="Search farm data">
+                        <i class="fas fa-search absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+                <div class="flex items-center space-x-4">
+                    <div class="relative">
+                        <button id="notificationBell" class="text-gray-600 hover:text-gray-900" aria-label="View notifications">
+                            <i class="fas fa-bell"></i>
+                            <span id="notificationCount" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">0</span>
+                        </button>
+                    </div>
+                    <a href="profile.html" id="profileLink" class="w-8 h-8 rounded-full bg-green-100 flex items-center justify-center hover:bg-green-200 transition-colors" aria-label="View profile">
+                        <i class="fas fa-user text-green-700"></i>
+                    </a>
+                </div>
+            </div>
+            <!-- Content Area -->
+            <div class="flex-1 overflow-y-auto p-6">
+                <!-- Dashboard Section -->
+                <div id="dashboard" class="section">
+                    <div class="mb-6 flex justify-between items-center">
+                        <h1 class="text-2xl font-bold text-gray-800">Motlhabanesburg Dashboard</h1>
+                        <div class="flex space-x-3">
+                            <button id="addRecord" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg flex items-center space-x-2" aria-label="Add new livestock record">
+                                <i class="fas fa-plus"></i>
+                                <span>Add Record</span>
+                            </button>
+                            <button id="exportData" class="border border-green-600 text-green-600 hover:bg-green-50 px-4 py-2 rounded-lg flex items-center space-x-2" aria-label="Export livestock data">
+                                <i class="fas fa-download"></i>
+                                <span>Export</span>
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Stats Cards -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6 stats-grid">
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-green-500">
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Total Hectares</p>
+                                    <p class="text-2xl font-bold mt-1">200 <span class="text-sm text-gray-500">hectares</span></p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center">
+                                    <i class="fas fa-map-marked-alt text-green-600"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-blue-500">
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Livestock Types</p>
+                                    <p class="text-2xl font-bold mt-1">3 <span class="text-sm text-gray-500">types</span></p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center">
+                                    <i class="fas fa-cow text-blue-600"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm text-blue-600 flex items-center">
+                                <i class="fas fa-arrow-up mr-1"></i>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-yellow-500">
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Livestock Total</p>
+                                    <p class="text-2xl font-bold mt-1">200 <span class="text-sm text-gray-500">animals</span></p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-yellow-100 flex items-center justify-center">
+                                    <i class="fas fa-paw text-yellow-600"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm text-yellow-600 flex items-center">
+                                <i class="fas fa-arrow-down mr-1"></i>
+                                <span>3% decrease from last month</span>
+                            </div>
+                        </div>
+                        <div class="bg-white rounded-xl shadow-sm p-6 border-l-4 border-red-500 pulse">
+                            <div class="flex justify-between">
+                                <div>
+                                    <p class="text-sm text-gray-500">Health Checks Due</p>
+                                    <p class="text-2xl font-bold mt-1" id="healthChecksDue">0 <span class="text-sm text-gray-500">animals</span></p>
+                                </div>
+                                <div class="w-12 h-12 rounded-full bg-red-100 flex items-center justify-center">
+                                    <i class="fas fa-stethoscope text-red-600"></i>
+                                </div>
+                            </div>
+                            <div class="mt-4 text-sm text-red-600 flex items-center">
+                                <i class="fas fa-exclamation-circle mr-1"></i>
+                                <span>Treatment required</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Main Content Grid -->
+                    <div class="grid grid-cols-1 gap-6">
+                        <!-- Weather & Tasks -->
+                        <div class="space-y-6">
+                            <!-- Weather Widget -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-lg font-semibold">Weather Forecast</h2>
+                                    <div class="text-sm text-gray-500" id="weatherDate"></div>
+                                </div>
+                                <div class="flex items-center justify-between mb-4">
+                                    <div class="flex items-center">
+                                        <i id="weatherIcon" class="w-12 h-12 mr-3 fas fa-sun text-yellow-500" aria-label="Weather icon"></i>
+                                        <div>
+                                            <div class="text-3xl font-bold" id="weatherTemp">--°C</div>
+                                            <div class="text-sm text-gray-500" id="weatherDesc">Loading...</div>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <div class="text-sm" id="weatherHumidity"></div>
+                                        <div class="text-sm" id="weatherWind"></div>
+                                    </div>
+                                </div>
+                                <div class="grid grid-cols-4 gap-2 text-center text-xs">
+                                    <div class="p-2">
+                                        <div>Now</div>
+                                        <i class="fas fa-sun text-yellow-500 my-1"></i>
+                                        <div>28°</div>
+                                    </div>
+                                    <div class="p-2">
+                                        <div>15:00</div>
+                                        <i class="fas fa-sun text-yellow-500 my-1"></i>
+                                        <div>30°</div>
+                                    </div>
+                                    <div class="p-2">
+                                        <div>18:00</div>
+                                        <i class="fas fa-cloud text-gray-400 my-1"></i>
+                                        <div>26°</div>
+                                    </div>
+                                    <div class="p-2">
+                                        <div>21:00</div>
+                                        <i class="fas fa-cloud-rain text-blue-400 my-1"></i>
+                                        <div>22°</div>
+                                    </div>
+                                </div>
+                                <div class="mt-4 pt-4 border-t">
+                                    <div class="flex justify-between text-sm">
+                                        <span>Rain expected tomorrow</span>
+                                        <button id="weatherDetails" class="text-green-600 hover:text-green-800" aria-label="View weather details">Details <i class="fas fa-chevron-right ml-1"></i></button>
+                                    </div>
+                                    <div id="weatherExtra" class="hidden mt-2 text-sm text-gray-600">
+                                        <p>Tomorrow: 22°C, 70% chance of rain, 15 km/h wind</p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Tasks Widget -->
+                            <div class="bg-white rounded-xl shadow-sm p-6">
+                                <div class="flex justify-between items-center mb-4">
+                                    <h2 class="text-lg font-semibold">Today's Tasks</h2>
+                                    <button id="viewAllTasks" class="text-green-600 hover:text-green-800 text-sm" aria-label="View all tasks">View All</button>
+                                </div>
+                                <div class="space-y-4 task-list"></div>
+                                <div class="mt-4 pt-4 border-t">
+                                    <div class="relative">
+                                        <input type="text" id="newTaskInput" placeholder="Add new task..." class="pl-10 pr-4 py-2 border rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-500 input-highlight" aria-label="Add new task">
+                                        <i class="fas fa-plus absolute left-3 top-3 text-gray-400"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Recent Activity -->
+                    <div class="mt-8 bg-white rounded-xl shadow-sm p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-lg font-semibold">Recent Farm Activities</h2>
+                            <button id="viewAllActivities" class="text-green-600 hover:text-green-800 text-sm" aria-label="View all activities">View All</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Worker</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200 activity-list"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Livestock Section (All Livestock) -->
+                <div id="livestock" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">All Livestock</h1>
+                        <p class="text-gray-600 mt-2">View and manage all livestock records, sorted by type.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">All Livestock Records</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="all-livestock-records">
+
+
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Farmer</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight (kg)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sex</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Livestock Sections (Individual) -->
+                <div id="livestock-cattle" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Cattle Management</h1>
+                        <p class="text-gray-600 mt-2">View and manage cattle records.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">Cattle Records</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="cattle-records">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Farmer</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight (kg)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sex</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="livestock-sheep" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Sheep Management</h1>
+                        <p class="text-gray-600 mt-2">View and manage sheep records.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">Sheep Records</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="sheep-records">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Farmer</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight (kg)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sex</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div id="livestock-goat" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Goat Management</h1>
+                        <p class="text-gray-600 mt-2">View and manage goat records.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">Goat Records</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="goat-records">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Farmer</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Type</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date of Birth</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Weight (kg)</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sex</th>                                                 
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Activities Section -->
+                <div id="activities" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Activities & Tasks</h1>
+                        <p class="text-gray-600 mt-2">View and manage farm tasks and activities.</p>
+                    </div>
+                    <div class="space-y-6">
+                        <!-- Tasks Section -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <h2 class="text-lg font-semibold mb-4">Tasks</h2>
+                            <div class="space-y-4">
+                                <!-- To Be Done -->
+                                <div class="task-section to-be-done">
+                                    <div class="task-section-header flex justify-between items-center p-4 bg-yellow-50 rounded-lg" data-section="to-be-done">
+                                        <h3 class="text-md font-medium">To Be Done</h3>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                    <div class="task-section-content p-4">
+                                        <div class="task-list-to-be-done space-y-4"></div>
+                                    </div>
+                                </div>
+                                <!-- Busy With -->
+                                <div class="task-section busy-with">
+                                    <div class="task-section-header flex justify-between items-center p-4 bg-blue-50 rounded-lg" data-section="busy-with">
+                                        <h3 class="text-md font-medium">Busy With</h3>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                    <div class="task-section-content p-4">
+                                        <div class="task-list-busy-with space-y-4"></div>
+                                    </div>
+                                </div>
+                                <!-- Done -->
+                                <div class="task-section done">
+                                    <div class="task-section-header flex justify-between items-center p-4 bg-green-50 rounded-lg" data-section="done">
+                                        <h3 class="text-md font-medium">Done</h3>
+                                        <i class="fas fa-chevron-down"></i>
+                                    </div>
+                                    <div class="task-section-content p-4">
+                                        <div class="task-list-done space-y-4"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Recent Activities Section -->
+                        <div class="bg-white rounded-xl shadow-sm p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <h2 class="text-lg font-semibold">Recent Farm Activities</h2>
+                                <button id="viewAllActivities" class="text-green-600 hover:text-green-800 text-sm" aria-label="View all activities">View All</button>
+                            </div>
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full divide-y divide-gray-200">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Activity</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Worker</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                            <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="bg-white divide-y divide-gray-200 activity-list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Health Section -->
+                <div id="health" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Health Records</h1>
+                        <p class="text-gray-600 mt-2">Manage livestock health records.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6 mb-6">
+                        <h2 class="text-lg font-semibold mb-4">Add Health Record</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label for="healthFarmerName" class="block text-sm font-medium text-gray-700">Farmer Name</label>
+                                <input type="text" id="healthFarmerName" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                            </div>
+                            <div>
+                                <label for="healthLivestockType" class="block text-sm font-medium text-gray-700">Livestock Type</label>
+                                <select id="healthLivestockType" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                                    <option value="Cattle">Cattle</option>
+                                    <option value="Sheep">Sheep</option>
+                                    <option value="Goat">Goat</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="sickness" class="block text-sm font-medium text-gray-700">Sickness</label>
+                                <input type="text" id="sickness" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                            </div>
+                            <div>
+                                <label for="tagNumber" class="block text-sm font-medium text-gray-700">Tag Number</label>
+                                <input type="text" id="tagNumber" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                            </div>
+                            <div>
+                                <label for="treatmentDate" class="block text-sm font-medium text-gray-700">Treatment Date</label>
+                                <input type="date" id="treatmentDate" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                            </div>
+                            <div class="flex justify-end">
+                                <button id="saveHealthRecord" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" aria-label="Save health record">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">Health Records</h2>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200" id="health-records">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Farmer</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Livestock Type</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Sickness</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tag Number</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Treatment Date</th>
+                                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <!-- Weather Section -->
+                <div id="weather" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Weather</h1>
+                        <p class="text-gray-600 mt-2">View weather forecasts.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">Weather Forecast</h2>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center">
+                                <i id="weatherIconFull" class="w-12 h-12 mr-3 fas fa-sun text-yellow-500" aria-label="Weather icon"></i>
+                                <div>
+                                    <div class="text-3xl font-bold" id="weatherTempFull">--°C</div>
+                                    <div class="text-sm text-gray-500" id="weatherDescFull">Loading...</div>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <div class="text-sm" id="weatherHumidityFull"></div>
+                                <div class="text-sm" id="weatherWindFull"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Annual Report Section -->
+                <div id="annual-report" class="section hidden">
+                    <div class="mb-6">
+                        <h1 class="text-2xl font-bold text-gray-800">Annual Report</h1>
+                        <p class="text-gray-600 mt-2">View annual farm reports.</p>
+                    </div>
+                    <div class="bg-white rounded-xl shadow-sm p-6">
+                        <h2 class="text-lg font-semibold mb-4">Annual Report Summary</h2>
+                        <div class="text-sm text-gray-600">
+                            <p>Livestock Added: 50 animals</p>
+                            <p>Tasks Completed: 200 tasks</p>
+                            <p>Health Issues Reported: 5 cases</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Modal for Adding Livestock Record -->
+                <div id="addRecordModal" class="modal" role="dialog" aria-labelledby="modalTitle" aria-modal="true">
+                    <div class="modal-content">
+                        <div class="p-6">
+                            <h2 id="modalTitle" class="text-xl font-bold mb-4">Add Livestock Record</h2>
+                            <div class="space-y-4">
+                                <div>
+                                    <label for="farmerName" class="block text-sm font-medium text-gray-700">Farmer Name</label>
+                                    <input type="text" id="farmerName" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                                </div>
+                                <div>
+                                    <label for="livestockType" class="block text-sm font-medium text-gray-700">Livestock Type</label>
+                                    <select id="livestockType" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                                        <option value="Cattle">Cattle</option>
+                                        <option value="Sheep">Sheep</option>
+                                        <option value="Goat">Goat</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="dateOfBirth" class="block text-sm font-medium text-gray-700">Date of Birth</label>
+                                    <input type="date" id="dateOfBirth" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                                </div>
+                                <div>
+                                    <label for="weight" class="block text-sm font-medium text-gray-700">Weight (kg)</label>
+                                    <input type="number" id="weight" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" min="0" step="0.1" aria-required="true">
+                                </div>
+                                <div>
+                                    <label for="sex" class="block text-sm font-medium text-gray-700">Sex</label>
+                                    <select id="sex" class="mt-1 block w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-green-500" aria-required="true">
+                                        <option value="Male">Male</option>
+                                        <option value="Female">Female</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="p-4 border-t flex justify-end space-x-3">
+                            <button id="cancelAdd" class="border border-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-50" aria-label="Cancel adding record">Cancel</button>
+                            <button id="saveLivestock" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700" aria-label="Save livestock record">Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <script>
+        // Mock User Data (Simulating logged-in user)
+        const currentUser = {
+            username: 'FarmUser',
+            userId: 'user123'
+        };
+
+        // Mock Data
+        let livestockRecords = [
+            { id: '1', userId: 'user123', farmer: 'Tshepang', type: 'Cattle', dateOfBirth: '2023-01-15', weight: 450, sex: 'Male', createdAt: new Date().toISOString() },
+            { id: '2', userId: 'user123', farmer: 'Tshepang', type: 'Sheep', dateOfBirth: '2023-03-10', weight: 60, sex: 'Female', createdAt: new Date().toISOString() },
+            { id: '3', userId: 'user123', farmer: 'Tshepang', type: 'Goat', dateOfBirth: '2023-06-20', weight: 40, sex: 'Male', createdAt: new Date().toISOString() },
+            { id: '4', userId: 'user123', farmer: 'Tshepang', type: 'Cattle', dateOfBirth: '2023-02-20', weight: 420, sex: 'Female', createdAt: new Date().toISOString() },
+            { id: '5', userId: 'user123', farmer: 'Tshepang', type: 'Sheep', dateOfBirth: '2023-04-05', weight: 55, sex: 'Male', createdAt: new Date().toISOString() }
+        ];
+        let tasks = [
+            { id: '1', userId: 'user123', text: 'Check cattle health', status: 'To Be Done', due: new Date().toISOString(), completed: false, createdAt: new Date().toISOString() },
+            { id: '2', userId: 'user123', text: 'Shear sheep', status: 'Busy With', due: new Date().toISOString(), completed: false, createdAt: new Date().toISOString() },
+            { id: '3', userId: 'user123', text: 'Clean barn', status: 'Done', due: new Date().toISOString(), completed: true, createdAt: new Date().toISOString() }
+        ];
+        let activities = [
+            { id: '1', userId: 'user123', activity: 'Task completed', location: 'Farm', worker: 'user@example.com', status: 'Completed', date: new Date().toISOString() }
+        ];
+        let healthRecords = [
+            { id: '1', userId: 'user123', farmer: 'John Doe', livestockType: 'Cattle', sickness: 'Foot Rot', tagNumber: 'C123', treatmentDate: '2025-05-09', createdAt: new Date().toISOString() },
+            { id: '2', userId: 'user123', farmer: 'Jane Smith', livestockType: 'Sheep', sickness: 'Parasites', tagNumber: 'S456', treatmentDate: '2025-05-07', createdAt: new Date().toISOString() }
+        ];
+
+        // Toast Notifications
+        function showError(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                className: 'notification-error'
+            }).showToast();
+        }
+
+        function showSuccess(message) {
+            Toastify({
+                text: message,
+                duration: 3000,
+                gravity: 'top',
+                position: 'right',
+                className: 'notification-success'
+            }).showToast();
+        }
+
+        // Initialize User Profile
+        function initializeUserProfile() {
+            const userNameEl = document.getElementById('userName');
+            userNameEl.textContent = currentUser.username || 'Guest';
+            document.getElementById('userStatus').textContent = currentUser.username ? 'Authenticated' : 'Guest';
+        }
+
+        // Sidebar and Navigation
+        function initializeNavigation() {
+            const toggleSidebarButton = document.getElementById('toggleSidebar');
+            const sidebar = document.querySelector('.sidebar');
+            const backdrop = document.querySelector('.sidebar-backdrop');
+
+            toggleSidebarButton.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const isOpen = sidebar.classList.toggle('open');
+                toggleSidebarButton.setAttribute('aria-expanded', isOpen);
+                backdrop.classList.toggle('block', isOpen);
+            });
+
+            toggleSidebarButton.addEventListener('touchstart', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                const isOpen = sidebar.classList.toggle('open');
+                toggleSidebarButton.setAttribute('aria-expanded', isOpen);
+                backdrop.classList.toggle('block', isOpen);
+            });
+
+            backdrop.addEventListener('click', () => {
+                sidebar.classList.remove('open');
+                toggleSidebarButton.setAttribute('aria-expanded', 'false');
+                backdrop.classList.remove('block');
+            });
+
+            document.addEventListener('click', (e) => {
+                if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggleSidebarButton) {
+                    sidebar.classList.remove('open');
+                    toggleSidebarButton.setAttribute('aria-expanded', 'false');
+                    backdrop.classList.remove('block');
+                }
+            });
+
+            document.querySelectorAll('input').forEach(input => {
+                input.addEventListener('focus', function() {
+                    this.classList.add('input-highlight');
+                });
+                input.addEventListener('blur', function() {
+                    this.classList.remove('input-highlight');
+                });
+            });
+
+            const livestockItem = document.querySelector('.nav-item[data-section="livestock"]');
+            const dropdownToggle = livestockItem.querySelector('.dropdown-toggle');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+
+            livestockItem.addEventListener('click', (e) => {
+                const isDropdownToggle = e.target === dropdownToggle || e.target.classList.contains('nav-text');
+                if (isDropdownToggle) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    const isExpanded = dropdownMenu.classList.toggle('show');
+                    livestockItem.setAttribute('aria-expanded', isExpanded);
+                } else {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('bg-green-700'));
+                    livestockItem.classList.add('bg-green-700');
+                    document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+                    document.getElementById('livestock').classList.remove('hidden');
+                    renderAllLivestockRecords(currentUser.userId);
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('open');
+                        toggleSidebarButton.setAttribute('aria-expanded', 'false');
+                        backdrop.classList.remove('block');
+                    }
+                }
+            });
+
+            document.querySelectorAll('.nav-item').forEach(item => {
+                if (item.getAttribute('data-section') !== 'livestock') {
+                    item.addEventListener('click', function(e) {
+                        if (this.closest('.dropdown-menu') || !this.querySelector('.dropdown-toggle')) {
+                            e.stopPropagation();
+                            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('bg-green-700'));
+                            this.classList.add('bg-green-700');
+                            const section = this.getAttribute('data-section');
+                            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+                            document.getElementById(section).classList.remove('hidden');
+                            if (['livestock-cattle', 'livestock-sheep', 'livestock-goat'].includes(section)) {
+                                const type = section.split('-')[1].charAt(0).toUpperCase() + section.split('-')[1].slice(1);
+                                renderLivestockRecords(type, section);
+                            } else if (section === 'livestock') {
+                                renderAllLivestockRecords(currentUser.userId);
+                            }
+                            if (section === 'activities') {
+                                renderTasks(currentUser.userId, true);
+                                renderActivities(currentUser.userId);
+                            }
+                            if (section === 'health') {
+                                renderHealthRecords(currentUser.userId);
+                            }
+                            if (window.innerWidth <= 768) {
+                                sidebar.classList.remove('open');
+                                toggleSidebarButton.setAttribute('aria-expanded', 'false');
+                                backdrop.classList.remove('block');
+                            }
+                        }
+                    });
+                }
+            });
+        }
+
+        // Livestock Management
+        function updateLivestockSubmenu(userId) {
+            const counts = { Cattle: 0, Sheep: 0, Goat: 0 };
+            livestockRecords.forEach(record => {
+                if (record.userId === userId && counts[record.type]) counts[record.type]++;
+            });
+            document.getElementById('cattle-count').textContent = `(${counts.Cattle})`;
+            document.getElementById('sheep-count').textContent = `(${counts.Sheep})`;
+            document.getElementById('goat-count').textContent = `(${counts.Goat})`;
+        }
+
+        function renderAllLivestockRecords(userId) {
+            const tableBody = document.querySelector('#all-livestock-records tbody');
+            tableBody.innerHTML = '';
+            const filteredRecords = livestockRecords.filter(record => record.userId === userId).sort((a, b) => a.type.localeCompare(b.type));
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-sm text-gray-500 text-center">No records found.</td></tr>';
+            } else {
+                filteredRecords.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.farmer}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.type}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.dateOfBirth}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.weight}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.sex}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button class="delete-livestock text-red-600 hover:text-red-800" data-id="${record.id}" aria-label="Delete livestock record"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                tableBody.querySelectorAll('.delete-livestock').forEach(button => {
+                    button.addEventListener('click', () => {
+                        livestockRecords = livestockRecords.filter(r => r.id !== button.getAttribute('data-id'));
+                        renderAllLivestockRecords(userId);
+                        updateLivestockSubmenu(userId);
+                        showSuccess('Livestock record deleted.');
+                    });
+                });
+            }
+        }
+
+        function renderLivestockRecords(type, section, userId = currentUser.userId) {
+            const tableBody = document.querySelector(`#${section} table tbody`);
+            tableBody.innerHTML = '';
+            const filteredRecords = livestockRecords.filter(record => record.userId === userId && record.type === type);
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-sm text-gray-500 text-center">No records found.</td></tr>';
+            } else {
+                filteredRecords.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.farmer}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.type}</íz=1"></td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.dateOfBirth}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.weight}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.sex}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button class="delete-livestock text-red-600 hover:text-red-800" data-id="${record.id}" aria-label="Delete livestock record"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                tableBody.querySelectorAll('.delete-livestock').forEach(button => {
+                    button.addEventListener('click', () => {
+                        livestockRecords = livestockRecords.filter(r => r.id !== button.getAttribute('data-id'));
+                        renderLivestockRecords(type, section, userId);
+                        updateLivestockSubmenu(userId);
+                        showSuccess('Livestock record deleted.');
+                    });
+                });
+            }
+        }
+
+        // Task Management
+        function renderTasks(userId, forActivitiesPage = false) {
+            const dashboardTaskList = document.querySelector('.task-list');
+            if (!forActivitiesPage && dashboardTaskList) {
+                dashboardTaskList.innerHTML = '';
+            }
+
+            const toBeDoneList = document.querySelector('.task-list-to-be-done');
+            const busyWithList = document.querySelector('.task-list-busy-with');
+            const doneList = document.querySelector('.task-list-done');
+            if (forActivitiesPage && toBeDoneList && busyWithList && doneList) {
+                toBeDoneList.innerHTML = '';
+                busyWithList.innerHTML = '';
+                doneList.innerHTML = '';
+            }
+
+            const filteredTasks = tasks.filter(task => task.userId === userId);
+            if (filteredTasks.length === 0) {
+                if (!forActivitiesPage && dashboardTaskList) {
+                    dashboardTaskList.innerHTML = '<div class="text-sm text-gray-500 text-center">No tasks found.</div>';
+                }
+                if (forActivitiesPage && toBeDoneList && busyWithList && doneList) {
+                    toBeDoneList.innerHTML = '<div class="text-sm text-gray-500 text-center">No tasks found.</div>';
+                    busyWithList.innerHTML = '<div class="text-sm text-gray-500 text-center">No tasks found.</div>';
+                    doneList.innerHTML = '<div class="text-sm text-gray-500 text-center">No tasks found.</div>';
+                }
+            } else {
+                filteredTasks.forEach(task => {
+                    const taskItem = document.createElement('div');
+                    taskItem.className = 'flex items-start task-item';
+
+                    if (!forActivitiesPage && dashboardTaskList) {
+                        taskItem.innerHTML = `
+                            <div class="flex-shrink-0 mt-1">
+                                <input type="checkbox" class="rounded text-green-600 focus:ring-green-500 task-checkbox" data-id="${task.id}" ${task.status === 'Done' ? 'checked' : ''} aria-label="Mark task as ${task.status === 'Done' ? 'incomplete' : 'complete'}">
+                            </div>
+                            <div class="ml-3">
+                                <p class="text-sm font-medium ${task.status === 'Done' ? 'text-gray-400 line-through' : ''}">${task.text}</p>
+                                <p class="text-xs text-gray-500">Due: ${new Date(task.due).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} | Status: ${task.status}</p>
+                            </div>
+                        `;
+                        dashboardTaskList.appendChild(taskItem);
+                    }
+
+                    if (forActivitiesPage && toBeDoneList && busyWithList && doneList) {
+                        const targetList = task.status === 'To Be Done' ? toBeDoneList :
+                                          task.status === 'Busy With' ? busyWithList : doneList;
+                        taskItem.innerHTML = `
+                            <div class="ml-3 w-full">
+                                <div class="flex justify-between items-center">
+                                    <p class="text-sm font-medium ${task.status === 'Done' ? 'text-gray-400 line-through' : ''}">${task.text}</p>
+                                    <select class="task-status-select border rounded-lg px-2 py-1 text-sm focus:outline-none focus:ring-2 focus:ring-green-500" data-id="${task.id}" aria-label="Change task status">
+                                        <option value="To Be Done" ${task.status === 'To Be Done' ? 'selected' : ''}>To Be Done</option>
+                                        <option value="Busy With" ${task.status === 'Busy With' ? 'selected' : ''}>Busy With</option>
+                                        <option value="Done" ${task.status === 'Done' ? 'selected' : ''}>Done</option>
+                                    </select>
+                                </div>
+                                <p class="text-xs text-gray-500">Due: ${new Date(task.due).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                            </div>
+                        `;
+                        targetList.appendChild(taskItem);
+                    }
+                });
+
+                if (!forActivitiesPage && dashboardTaskList) {
+                    dashboardTaskList.querySelectorAll('.task-checkbox').forEach(checkbox => {
+                        checkbox.addEventListener('change', () => {
+                            const id = checkbox.getAttribute('data-id');
+                            tasks = tasks.map(task => {
+                                if (task.id === id) {
+                                    const newStatus = checkbox.checked ? 'Done' : 'To Be Done';
+                                    activities.push({
+                                        id: Date.now().toString(),
+                                        userId: currentUser.userId,
+                                        activity: `Task ${checkbox.checked ? 'completed' : 'reopened'}`,
+                                        location: 'Farm',
+                                        worker: currentUser.username,
+                                        status: checkbox.checked ? 'Completed' : 'Pending',
+                                        date: new Date().toISOString()
+                                    });
+                                    updateNotificationCount();
+                                    return { ...task, status: newStatus, completed: checkbox.checked };
+                                }
+                                return task;
+                            });
+                            renderTasks(userId);
+                            showSuccess('Task updated.');
+                        });
+                    });
+                }
+
+                if (forActivitiesPage && toBeDoneList && busyWithList && doneList) {
+                    document.querySelectorAll('.task-status-select').forEach(select => {
+                        select.addEventListener('change', () => {
+                            const id = select.getAttribute('data-id');
+                            const newStatus = select.value;
+                            tasks = tasks.map(task => {
+                                if (task.id === id) {
+                                    activities.push({
+                                        id: Date.now().toString(),
+                                        userId: currentUser.userId,
+                                        activity: `Task status changed to ${newStatus}`,
+                                        location: 'Farm',
+                                        worker: currentUser.username,
+                                        status: newStatus === 'Done' ? 'Completed' : 'Pending',
+                                        date: new Date().toISOString()
+                                    });
+                                    updateNotificationCount();
+                                    return { ...task, status: newStatus, completed: newStatus === 'Done' };
+                                }
+                                return task;
+                            });
+                            renderTasks(userId, true);
+                            if (!document.getElementById('dashboard').classList.contains('hidden')) {
+                                renderTasks(userId, false);
+                            }
+                            showSuccess('Task status updated.');
+                        });
+                    });
+                }
+            }
+        }
+
+        // Activity Management
+        function renderActivities(userId) {
+            const tableBody = document.querySelector('.activity-list');
+            tableBody.innerHTML = '';
+            const filteredActivities = activities.filter(activity => activity.userId === userId);
+            if (filteredActivities.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-sm text-gray-500 text-center">No activities found.</td></tr>';
+            } else {
+                filteredActivities.forEach(activity => {
+                    const row = document.createElement('tr');
+                    row.className = 'activity-row';
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${new Date(activity.date).toLocaleString()}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium">${activity.activity}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${activity.location}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${activity.worker}</td>
+                        <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 py-1 ${activity.status === 'Completed' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'} text-xs rounded-full">${activity.status}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button class="delete-activity text-red-600 hover:text-red-800" data-id="${activity.id}" aria-label="Delete activity"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                tableBody.querySelectorAll('.delete-activity').forEach(button => {
+                    button.addEventListener('click', () => {
+                        activities = activities.filter(a => a.id !== button.getAttribute('data-id'));
+                        renderActivities(userId);
+                        showSuccess('Activity deleted.');
+                    });
+                });
+            }
+        }
+
+        // Health Records Management
+        function updateHealthChecksDue(userId) {
+            const today = new Date().toISOString().split('T')[0];
+            const dueCount = healthRecords.filter(record => 
+                record.userId === userId && record.treatmentDate >= today
+            ).length;
+            document.getElementById('healthChecksDue').innerHTML = `${dueCount} <span class="text-sm text-gray-500">animals</span>`;
+        }
+
+        function renderHealthRecords(userId) {
+            const tableBody = document.querySelector('#health-records tbody');
+            tableBody.innerHTML = '';
+            const filteredRecords = healthRecords.filter(record => record.userId === userId);
+            if (filteredRecords.length === 0) {
+                tableBody.innerHTML = '<tr><td colspan="6" class="px-6 py-4 text-sm text-gray-500 text-center">No health records found.</td></tr>';
+            } else {
+                filteredRecords.forEach(record => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.farmer}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.livestockType}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.sickness}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.tagNumber}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">${record.treatmentDate}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <button class="delete-health text-red-600 hover:text-red-800" data-id="${record.id}" aria-label="Delete health record"><i class="fas fa-trash"></i></button>
+                        </td>
+                    `;
+                    tableBody.appendChild(row);
+                });
+                tableBody.querySelectorAll('.delete-health').forEach(button => {
+                    button.addEventListener('click', () => {
+                        healthRecords = healthRecords.filter(r => r.id !== button.getAttribute('data-id'));
+                        renderHealthRecords(userId);
+                        updateHealthChecksDue(userId);
+                        showSuccess('Health record deleted.');
+                    });
+                });
+            }
+        }
+
+        function initializeHealthForm() {
+            const saveHealthRecordButton = document.getElementById('saveHealthRecord');
+            saveHealthRecordButton.addEventListener('click', () => {
+                const farmer = document.getElementById('healthFarmerName').value.trim();
+                const livestockType = document.getElementById('healthLivestockType').value;
+                const sickness = document.getElementById('sickness').value.trim();
+                const tagNumber = document.getElementById('tagNumber').value.trim();
+                const treatmentDate = document.getElementById('treatmentDate').value;
+
+                if (!farmer || !livestockType || !sickness || !tagNumber || !treatmentDate) {
+                    showError('Please fill all fields with valid data.');
+                    return;
+                }
+
+                saveHealthRecordButton.disabled = true;
+                saveHealthRecordButton.classList.add('loading');
+                setTimeout(() => {
+                    healthRecords.push({
+                        id: Date.now().toString(),
+                        userId: currentUser.userId,
+                        farmer,
+                        livestockType,
+                        sickness,
+                        tagNumber,
+                        treatmentDate,
+                        createdAt: new Date().toISOString()
+                    });
+                    renderHealthRecords(currentUser.userId);
+                    updateHealthChecksDue(currentUser.userId);
+                    document.getElementById('healthFarmerName').value = '';
+                    document.getElementById('healthLivestockType').value = 'Cattle';
+                    document.getElementById('sickness').value = '';
+                    document.getElementById('tagNumber').value = '';
+                    document.getElementById('treatmentDate').value = '';
+                    showSuccess('Health record added.');
+                    saveHealthRecordButton.disabled = false;
+                    saveHealthRecordButton.classList.remove('loading');
+                }, 500);
+            });
+        }
+
+        // Notification Count
+        let notificationCount = 0;
+        function updateNotificationCount() {
+            notificationCount++;
+            const countEl = document.getElementById('notificationCount');
+            countEl.textContent = notificationCount;
+            countEl.classList.remove('hidden');
+        }
+
+        document.getElementById('notificationBell').addEventListener('click', () => {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.getElementById('activities').classList.remove('hidden');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('bg-green-700'));
+            document.querySelector('.nav-item[data-section="activities"]').classList.add('bg-green-700');
+            notificationCount = 0;
+            const countEl = document.getElementById('notificationCount');
+            countEl.textContent = '0';
+            countEl.classList.add('hidden');
+            renderTasks(currentUser.userId, true);
+            renderActivities(currentUser.userId);
+        });
+
+        // Add Livestock Record Modal
+        function initializeAddRecordModal() {
+            const addRecordModal = document.getElementById('addRecordModal');
+            const saveLivestockButton = document.getElementById('saveLivestock');
+            document.getElementById('addRecord').addEventListener('click', () => {
+                addRecordModal.style.display = 'flex';
+            });
+
+            addRecordModal.addEventListener('click', (e) => {
+                if (e.target === addRecordModal) {
+                    addRecordModal.style.display = 'none';
+                    clearLivestockForm();
+                }
+            });
+
+            document.getElementById('cancelAdd').addEventListener('click', () => {
+                addRecordModal.style.display = 'none';
+                clearLivestockForm();
+            });
+
+            saveLivestockButton.addEventListener('click', () => {
+                const farmer = document.getElementById('farmerName').value.trim();
+                const type = document.getElementById('livestockType').value;
+                const dateOfBirth = document.getElementById('dateOfBirth').value;
+                const weight = parseFloat(document.getElementById('weight').value);
+                const sex = document.getElementById('sex').value;
+
+                if (!farmer || !type || !dateOfBirth || isNaN(weight) || weight <= 0 || !sex) {
+                    showError('Please fill all fields with valid data.');
+                    return;
+                }
+
+                saveLivestockButton.disabled = true;
+                saveLivestockButton.classList.add('loading');
+                setTimeout(() => {
+                    livestockRecords.push({
+                        id: Date.now().toString(),
+                        userId: currentUser.userId,
+                        farmer,
+                        type,
+                        dateOfBirth,
+                        weight,
+                        sex,
+                        createdAt: new Date().toISOString()
+                    });
+                    updateLivestockSubmenu(currentUser.userId);
+                    renderLivestockRecords(type, `livestock-${type.toLowerCase()}`, currentUser.userId);
+                    addRecordModal.style.display = 'none';
+                    clearLivestockForm();
+                    showSuccess('Livestock record added.');
+                    saveLivestockButton.disabled = false;
+                    saveLivestockButton.classList.remove('loading');
+                }, 500);
+            });
+
+            function clearLivestockForm() {
+                document.getElementById('farmerName').value = '';
+                document.getElementById('livestockType').value = 'Cattle';
+                document.getElementById('dateOfBirth').value = '';
+                document.getElementById('weight').value = '';
+                document.getElementById('sex').value = 'Male';
+                saveLivestockButton.disabled = false;
+                saveLivestockButton.classList.remove('loading');
+            }
+        }
+
+        // Task Input
+        function initializeTaskInput() {
+            document.getElementById('newTaskInput').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter' && e.target.value.trim()) {
+                    const taskText = e.target.value.trim();
+                    tasks.push({
+                        id: Date.now().toString(),
+                        userId: currentUser.userId,
+                        text: taskText,
+                        status: 'To Be Done',
+                        due: new Date().toISOString(),
+                        completed: false,
+                        createdAt: new Date().toISOString()
+                    });
+                    renderTasks(currentUser.userId);
+                    if (!document.getElementById('activities').classList.contains('hidden')) {
+                        renderTasks(currentUser.userId, true);
+                    }
+                    e.target.value = '';
+                    showSuccess('Task added.');
+                }
+            });
+        }
+
+        // Data Export
+        function initializeDataExport() {
+            document.getElementById('exportData').addEventListener('click', () => {
+                const records = livestockRecords.filter(r => r.userId === currentUser.userId);
+                const csv = [
+                    'Farmer,Type,Date of Birth,Weight (kg),Sex',
+                    ...records.map(item => `${item.farmer},${item.type},${item.dateOfBirth},${item.weight},${item.sex}`)
+                ].join('\n');
+                const blob = new Blob([csv], { type: 'text/csv' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'farm_livestock_data.csv';
+                a.click();
+                URL.revokeObjectURL(url);
+                showSuccess('Data exported successfully.');
+            });
+        }
+
+        // View All Tasks and Activities
+        function initializeViewAll() {
+            document.getElementById('viewAllTasks').addEventListener('click', function() {
+                const hiddenTasks = document.querySelectorAll('.task-item.hidden');
+                const isShowingAll = hiddenTasks.length > 0 && hiddenTasks[0].classList.contains('hidden');
+                hiddenTasks.forEach(task => task.classList.toggle('hidden'));
+                this.textContent = isShowingAll ? 'Show Less' : 'View All';
+            });
+
+            document.getElementById('viewAllActivities').addEventListener('click', function() {
+                const hiddenActivities = document.querySelectorAll('.activity-row.hidden');
+                const isShowingAll = hiddenActivities.length > 0 && hiddenActivities[0].classList.contains('hidden');
+                hiddenActivities.forEach(row => row.classList.toggle('hidden'));
+                this.textContent = isShowingAll ? 'Show Less' : 'View All';
+            });
+        }
+
+        // Initialize Task Section Toggles
+        function initializeTaskSections() {
+            document.querySelectorAll('.task-section-header').forEach(header => {
+                header.addEventListener('click', () => {
+                    const section = header.closest('.task-section');
+                    const content = section.querySelector('.task-section-content');
+                    const isExpanded = content.classList.toggle('show');
+                    const chevron = header.querySelector('i');
+                    chevron.classList.toggle('fa-chevron-down', !isExpanded);
+                    chevron.classList.toggle('fa-chevron-up', isExpanded);
+                });
+            });
+        }
+
+        // Weather Widget
+        function initializeWeatherWidget() {
+            const weatherTemp = document.getElementById('weatherTemp');
+            const weatherDesc = document.getElementById('weatherDesc');
+            const weatherHumidity = document.getElementById('weatherHumidity');
+            const weatherWind = document.getElementById('weatherWind');
+            const weatherDate = document.getElementById('weatherDate');
+            const weatherIcon = document.getElementById('weatherIcon');
+            const weatherTempFull    = document.getElementById('weatherTempFull');
+            const weatherDescFull = document.getElementById('weatherDescFull');
+            const weatherHumidityFull = document.getElementById('weatherHumidityFull');
+            const weatherWindFull = document.getElementById('weatherWindFull');
+            const weatherIconFull = document.getElementById('weatherIconFull');
+
+            const mockWeather = {
+                main: { temp: 28, humidity: 60 },
+                weather: [{ main: 'Clear', description: 'Sunny' }],
+                wind: { speed: 5 }
+            };
+
+            const updateWeather = (tempEl, descEl, humidityEl, windEl, iconEl) => {
+                tempEl.textContent = `${Math.round(mockWeather.main.temp)}°C`;
+                descEl.textContent = mockWeather.weather[0].description;
+                humidityEl.textContent = `Humidity: ${mockWeather.main.humidity}%`;
+                windEl.textContent = `Wind: ${mockWeather.wind.speed} km/h`;
+                iconEl.className = 'w-12 h-12 mr-3 fas fa-sun text-yellow-500';
+                iconEl.setAttribute('aria-label', `Weather: ${mockWeather.weather[0].description}`);
+            };
+
+            updateWeather(weatherTemp, weatherDesc, weatherHumidity, weatherWind, weatherIcon);
+            updateWeather(weatherTempFull, weatherDescFull, weatherHumidityFull, weatherWindFull, weatherIconFull);
+            weatherDate.textContent = `Today, ${new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })}`;
+        }
+
+        // Weather Details Toggle
+        function initializeWeatherDetails() {
+            document.getElementById('weatherDetails').addEventListener('click', () => {
+                const weatherExtra = document.getElementById('weatherExtra');
+                weatherExtra.classList.toggle('hidden');
+            });
+        }
+
+        // Search Functionality
+        function initializeSearch() {
+            const searchInput = document.querySelector('.search-input');
+            searchInput.addEventListener('input', () => {
+                const searchTerm = searchInput.value.toLowerCase();
+                document.querySelectorAll('.section').forEach(section => {
+                    const textContent = section.textContent.toLowerCase();
+                    section.style.display = textContent.includes(searchTerm) || !searchTerm ? 'block' : 'none';
+                });
+            });
+        }
+
+        // Initialize Application
+        function initialize() {
+    initializeNavigation();
+    initializeAddRecordModal();
+    initializeTaskInput();
+    initializeDataExport();
+    initializeViewAll();
+    initializeTaskSections();
+    initializeWeatherWidget();
+    initializeWeatherDetails();
+    initializeSearch();
+    initializeHealthForm(); // Add this
+    updateLivestockSubmenu(currentUser.userId);
+    renderTasks(currentUser.userId);
+    renderActivities(currentUser.userId);
+    ['Cattle', 'Sheep', 'Goat'].forEach(type => renderLivestockRecords(type, `livestock-${type.toLowerCase()}`, currentUser.userId));
+}
+
+        initialize();
+    </script>
+</body>
+</html>
